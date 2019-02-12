@@ -298,8 +298,7 @@ def grad_descent(X_train, y_train, X_val, y_val, reg=0.0, lr_W=2.5e-12, \
 		val_rmse = np.sqrt(np.linalg.norm((X_val @ W).reshape((-1, 1)) + b - y_val) ** 2 / m_val)
 		obj_val.append(val_rmse)
 		obj_train.append(train_rmse)
-		W_grad = ((X_train.T @ X_train + reg * np.eye(n)) @ W \
-			+ X_train.T @ (b - y_train)) / m_train
+		W_grad = ((X_train.T @ X_train + reg * np.eye(n)) @ W + X_train.T @ (b - y_train)) / m_train
 		b_grad = (sum(X_train @ W) - sum(y_train) + b * m_train) / m_train
 		# update weights and bias
 		W = W-lr_W*W_grad
