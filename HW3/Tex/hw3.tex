@@ -1,0 +1,113 @@
+\documentclass[12pt,letterpaper,fleqn]{hmcpset}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{enumerate}
+\usepackage{hyperref}
+\usepackage{parskip}
+
+\input{macros.tex}
+
+% info for header block in upper right hand corner
+\name{}
+\class{Math189R SP19}
+\assignment{Homework 3}
+\duedate{Monday, Feb 18, 2019}
+
+\begin{document}
+\newcommand{\sumk}{\sum_{i=1}^K}
+\newcommand{\sumkL}{\sum_{i=1}^{K-1}}
+\newcommand{\eeta}{\boldsymbol{\eta}}
+\newcommand{\pro}{\PP(\theta;a,b)}
+Feel free to work with other students, but make sure you write up the homework
+and code on your own (no copying homework \textit{or} code; no pair programming).
+Feel free to ask students or instructors for help debugging code or whatever else,
+though.
+
+\begin{problem}[1]
+(\textbf{Murphy 2.16}) Suppose $\theta \sim \text{Beta}(a,b)$ such
+        that
+        \[
+            \PP(\theta; a,b) = \frac{1}{B(a,b)} \theta^{a-1}(1-\theta)^{b-1} = \frac{\Gamma(a+b)}{\Gamma(a)\Gamma(b)} \theta^{a-1}(1-\theta)^{b-1}
+        \]
+        where $B(a,b) = \Gamma(a)\Gamma(b)/\Gamma(a+b)$ is the Beta function
+        and $\Gamma(x)$ is the Gamma function.
+        Derive the mean, mode, and variance of $\theta$.
+\end{problem}
+\begin{solution}
+\begin{enumerate}
+\item[Mean] \textit{The mean value is the expected value; }
+\begin{align*}
+\EE(\theta) &= \int \theta \pro d\theta = \int \theta \frac{1}{B(a,b)} \theta^{a-1} (1-\theta)^{b-1} d\theta\\
+&= \frac{1}{B(a,b)} \int \theta^{a}(1-\theta)^{b-1} d\theta \\
+&= \frac{B(a+1,b)}{B(a,b)}\\
+&= \left[\frac{\Gamma(a+1)\Gamma(b)}{\Gamma(a+b+1)}\right] \left[\frac{\Gamma(a+b)}{\Gamma(a)\Gamma(b)}\right]\\
+&=\left[\frac{a\Gamma(a)\Gamma(b)}{a+b\Gamma(a+b)}\right] \left[\frac{\Gamma(a+b)}{\Gamma(a)\Gamma(b)}\right]\\
+&=\boxed{\frac{a}{a+b}}
+\end{align*}
+\item[Variance] \textit{We know that this is $\EE[\theta^2]-\EE[\theta]^2$;}
+\begin{align*}
+\EE[\theta^2]-\EE[\theta]^2&= \int \theta^2 \pro d\theta - \frac{a^2}{(a+b)^2}\\
+&=\frac{1}{B(a,b)}\int \theta^{a+1}(1-\theta)^{b-1}d \theta  - \frac{a^2}{(a+b)^2}\\
+&= \frac{B(a+2,b)}{B(a,b)} - \frac{a^2}{(a+b)^2}\\
+&= \frac{\Gamma(a+2)\Gamma(b)}{\Gamma(a+b+2)}\frac{\Gamma(a+b)}{\Gamma(a)\Gamma(b)}- \frac{a^2}{(a+b)^2}\\
+&= \frac{a(a+1)\Gamma(a)\Gamma(b)}{(a+b)(a+b+1)\Gamma(a+b)}\frac{\Gamma(a+b)}{\Gamma(a)\Gamma(b)}- \frac{a^2}{(a+b)^2}\\
+&=\frac{a(a+1)}{(a+b)(a+b+1)}- \frac{a^2}{(a+b)^2}\\
+&=\frac{(a^2+a)(a+b)-a^2(a+b+1)}{(a+b+1)(a+b)^2}\\
+&=\boxed{\frac{ab}{(a+b+1)(a+b)^2}}
+\end{align*}
+\item[Mode] \textit{If we visualize a distribution, the point at which there is the greatest number of values is the mode, it is also the only global extrema, as such, it is the only point where$\nabla_{\theta} = 0$;}
+\begin{align*}
+0 &= \nabla_{\theta}\left(\frac{1}{B(a,b)}\theta^{a-1}(1-\theta)^{b-1}\right)\\
+ &=\nabla_{\theta}(\theta^{a-1}(1-\theta)^{b-1}\\
+ &=(a-1)\theta^{a-2}(1-\theta)^{b-1}-(b-1)\theta^{a-1}(1-\theta)^{b-2}\\
+\end{align*}
+\textit{Therefore we can now solve for the specific value of $\theta$ that makes this true; }
+\begin{align*}
+(a-1)\theta^{a-2}(1-b)^{b-1} &= (b-1)\theta^{a-1}(1-\theta)^{b-2}\\
+(a-1)(1-\theta)&=(b-1)\theta\\
+\theta &=\boxed{ \frac{a-1}{a+b-2}}
+\end{align*}
+\end{enumerate}
+\end{solution}
+\newpage
+
+\begin{problem}[2]
+(\textbf{Murphy 9}) Show that the multinoulli distribution
+\[
+    \text{Cat}(\xx|\mub) = \prod_{i=1}^K \mu_i^{x_i}
+\]
+is in the exponential family and show that the generalized linear model
+corresponding to this distribution is the same as multinoulli logistic
+regression (softmax regression).
+\end{problem}
+\begin{solution}
+We are searching for something of the form $\pp(\yy;\boldsymbol{\eta}=b(\eeta)\exp \left(\eeta^TT(\yy)+a(\eeta)\right)$, as we did in class I am going to force the multinoulli distribution $\prod_{i=1}^K \mu_i^{x_i}$ into its exponential form:
+\begin{align}
+\prod_{i=1}^K \mu_i^{x_i} &= \exp\left[\log\left(\prod_{i=1}^K \mu_i^{x_i}\right)\right]\\
+&=\exp\left[\sumk\log(\mu_i^{x_i})\right]\\
+&= \exp \left[\sumk x_i\log(\mu_i)\right]
+\end{align}
+Now lets note that since this is a multinoulli distribution; 
+$$\mu_k = 1-\sumkL\mu_i \text{ and } x_k = 1- \sumkL x_i$$
+\begin{align}
+\phantom{\prod_{i=1}^K \mu_i^{x_i} }&= \exp\left[\sumkL x_i\log(\mu_i)+\left(1-\sumkL x_i\right)\log (\mu_k)\right]\\
+&=\exp\left[\sumkL x_i \log\left(\frac{\mu_i}{\mu_k}\right)+\log (\mu_k)\right]
+\end{align}
+Lets continue by defining $\eeta$ as follows; 
+$$ \eeta = \begin{pmatrix}
+\log\left( \frac{\mu_1}{\mu_k}\right)\\
+\vdots\\
+\log\left( \frac{\mu_{k-1}}{\mu_k}\right)
+\end{pmatrix}
+$$
+It follows that we can define $\mu_k$ as $1-\sumkL\mu_k\exp(\eta_i) $ or equivalently as $ \frac{1}{1 +\sumkL exp(\eta_i)} $
+Thus picking up where we left off; 
+\begin{align}
+\phantom{\prod_{i=1}^K \mu_i^{x_i} }&= \exp\left[\eeta^T\xx + \log\left(\frac{1}{1 +\sumkL \exp(\eta_i)}\right)\right]
+\end{align}
+This is in exponential form with $b(y)  =1 $ , $T(y) = \xx$ and $a(\eeta) = -\log( 1 +\sumkL \exp(\eta_i))$
+\end{solution}
+\newpage
+
+\end{document}
