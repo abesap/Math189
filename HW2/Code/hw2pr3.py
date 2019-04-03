@@ -482,3 +482,4 @@ if __name__ == '__main__':
 	# difference in weights
 	diff_W = np.linalg.norm(W_gd -W_opt_1)
 	print('==> Difference in weights is {diff: 4.4E}'.format(diff=diff_W))
+	#Adding a comment 
