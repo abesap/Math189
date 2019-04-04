@@ -97,11 +97,10 @@ if __name__ == '__main__':
     # TODO: Generate white Gaussian noise
     # HINT: Use np.random.normal to generate noise
     
-    noise = np.random.normal(mu,sigma,sampleSize)
+
     print(len(noise))
     #"*** YOUR CODE HERE ***"
-    
-    
+    noise = np.random.normal(mu,sigma,sampleSize)
     #"*** END YOUR CODE HERE ***"
     
     # TODO: generate y-coordinate of the 100 points with noise
@@ -109,10 +108,9 @@ if __name__ == '__main__':
     # HINT:
     #    1) Use X_space created in the part (c) above as the x-coordinates
     #    2) In this case, y = mx + b + noise
-    y_space_rand = np.multiply(X_space ,m_opt)+b_opt+noise
 
     #"*** YOUR CODE HERE ***"
-
+    y_space_rand = np.multiply(X_space ,m_opt)+b_opt+noise
     #"*** END YOUR CODE HERE ***"
     
     
@@ -127,16 +125,15 @@ if __name__ == '__main__':
     #       X.T * X * W_opt = X.T * y
     
     
-    X_space_stacked = np.column_stack((np.ones_like(X_space),X_space))  # need to be replaced following hint 1 and 2
-    
-    W_opt = np.linalg.solve((X_space_stacked.T@X_space_stacked),(X_space_stacked.T@y_space_rand))
+    # X_space_stacked = np.vstack((X_space, np.ones_like(X_space))).T  # need to be replaced following hint 1 and 2
+    #W_opt = np.linalg.solve(X_space_stacked.T, y_space_rand)
     #"*** YOUR CODE HERE ***"
     
     
     #"*** END YOUR CODE HERE ***"
     
     # get the new m, and new b from W_opt obtained above
-    b_rand_opt, m_rand_opt = W_opt.item(0), W_opt.item(1)
+    #b_rand_opt, m_rand_opt = W_opt.item(0), W_opt.item(1)
     
     # TODO: Generate the y-coordinate of 100 points with the new parameters
     #        obtained
@@ -146,7 +143,7 @@ if __name__ == '__main__':
     #    2) y = mx + b
     #    3) Make sure the array is in appropraite shape using a.reshape(-1,1)
     
-    y_pred_rand = np.multiply(X_space,m_rand_opt)+b_rand_opt
+    y_pred_rand = []
     #"*** YOUR CODE HERE ***"
     
     

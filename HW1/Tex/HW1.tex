@@ -7,11 +7,12 @@
 \input{macros.tex}
 
 % info for header block in upper right hand corner
-\name{}
-\class{Math189R SU17}
+\name{Abel Sapirstein}
+\class{Math189R SP19}
 \assignment{Homework 1}
-\duedate{Tuesday, May 15, 2017}
-
+\duedate{Monday February 4th, 2019 }
+\renewcommand{\cov}{\text{cov}}
+\newcommand{\XX}{\textbf{X}}
 \renewcommand{\labelenumi}{{(\alph{enumi})}}
 
 
@@ -36,9 +37,29 @@ Also show that
 \]
 \end{problem}
 \begin{solution}
-    \vfill
-\end{solution}
-\newpage
+  A. Lets demystify the expectation. Assuming that $\xx$ is a distribution and $\PP (\xx)$ is the probability density  for $\xx$, $\RR$ is the region in which $\xx$ is defined; 
+   \begin{align}
+   \EE [\yy] &= \int_{\RR} (A\xx+\bb)\PP(\xx)dx  \\
+   &= \int_{\RR}(A\xx)\PP(\xx)dx+ \int_{\RR}(\bb)\PP(\xx)dx\\
+   &= A\int_{\RR}\xx\PP(\xx)dx + \bb \int_{\RR}\PP(\xx)dx\\
+   &= A\EE(\xx)+\bb
+   \end{align}
+B. Lets begin with a definition of an entry into a covariant matrix; 
+\begin{align*}
+\cov(y_i,y_j)= \EE\left[[y_i-\EE[y_i]][y_j-\EE[y_j]]\right]
+\end{align*}
+It follows that the covariant matrix, is defined as;
+\begin{align*}
+\cov(\yy)&= \EE\left[[\yy-\EE[\yy]][\yy-\EE[\yy]]^T\right]\\
+&= \EE\left[[A\xx + \bb-\EE[A\xx + \bb]][A\xx + \bb-\EE[A\xx + \bb]]^T\right]\\
+&=\EE\left[[A\xx -A\EE[\xx]][A\xx -A\EE[\xx ]]^T\right]\\
+&=\EE\left[A[\xx-\EE[\xx]][\xx-\EE[\xx]]^TA^T\right]\\
+&=A\EE\left[[\xx-\EE[\xx]][\xx-\EE[\xx]]^T\right]A^T\\
+&= A\cov[\xx]A^T\\
+&=A\Sigmab A^T
+\end{align*}
+
+   \end{solution}
 
 
 
@@ -59,7 +80,91 @@ Given the dataset $\Dc = \{(x,y)\} = \{(0,1), (2,3), (3,6), (4,8)\}$
 
 \end{problem}
 \begin{solution}
-    \vfill
+\begin{enumerate}
+\item
+Lets begin by finding minimum the sum of the error squared; \[J(b,m)=\sum_i^n(y_i-(mx+b))^2\]
+\[ \frac{\delta J}{\delta m}= -2\sum(xy)+2m\sum (x)+ 2b \sum(x^2) = 0\] 
+\[\frac{\delta J}{\delta b} =-2\sum(y)+2m+2b\sum (x)=0 \]
+When we plug in the values for our four points, we arrive at the following equation; 
+\[\begin{bmatrix}
+9&29 \\
+4&9
+\end{bmatrix}
+\begin{bmatrix}
+b\\m
+\end{bmatrix}
+= \begin{bmatrix}
+56\\18
+\end{bmatrix}\]
+By Cramer's Rule, we can solve this as follows; 
+\[m=\frac{\begin{vmatrix}
+56 &29\\
+18&9
+\end{vmatrix}}{\begin{vmatrix}
+9&29\\
+4&9
+\end{vmatrix}}=\frac{62}{35}
+\phantom{ooooo} b =\frac{\begin{vmatrix}
+9&56\\
+4&18
+\end{vmatrix}}{\begin{vmatrix}
+9&29\\
+4&9
+\end{vmatrix}}= \frac{18}{35}\]
+\item Using the normal equation;
+\[\XX= \begin{bmatrix}
+9&29\\
+4&29
+\end{bmatrix}, \yy = \begin{bmatrix}
+56\\18
+\end{bmatrix}, \theta =
+\begin{bmatrix}
+b\\m
+\end{bmatrix}\]
+\begin{align*}
+\theta&=[\XX^T\XX]^{-1}\XX^T\yy\\
+&=\left[
+\begin{bmatrix}
+9&4\\
+29&9
+\end{bmatrix}
+\begin{bmatrix}
+9&29\\
+4&9
+\end{bmatrix}\right]^{-1}\begin{bmatrix}
+9&4\\
+29&9
+\end{bmatrix}
+\begin{bmatrix}
+56\\18
+\end{bmatrix}\\
+&=\begin{bmatrix}
+97 &297\\
+297&922
+\end{bmatrix}^{-1}
+\begin{bmatrix}
+9&4\\
+29&9
+\end{bmatrix}
+\begin{bmatrix}
+56\\18
+\end{bmatrix}\\
+&=\frac{1}{1225}\begin{bmatrix}
+-135&1015\\
+140&-315
+\end{bmatrix}
+\begin{bmatrix}
+56\\18
+\end{bmatrix}\\
+&=\frac{1}{1225}\begin{bmatrix}
+630\\2170
+\end{bmatrix}\\
+&=\begin{bmatrix}
+\frac{18}{35}\\[6pt]
+\frac{62}{35}
+\end{bmatrix}
+\end{align*}
+\end{enumerate}
 \end{solution}
 \newpage
 
