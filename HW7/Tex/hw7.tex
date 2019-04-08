@@ -37,7 +37,48 @@ is given by
 \]
 \end{problem}
 \begin{solution}
-\vfill
+\begin{enumerate}[a.]
+    \item 
+Lets begin with the \textbf{complete log likeihood} of this data as defined by Murphy 11.29, but without the $\sigmab$ term because we are not dealing with a Gaussian; 
+\begin{align*}
+    \ell(\mub) &= \sum_{i}\sum_{k}r_{ik}\log p(\xx_i |\thetab)
+\end{align*}
+But since this is a Bernoulli, we can expand further; 
+    \begin{align*}
+         \ell(\mub)&= \sum_i \sum_k r_{ik} \sum_j \xx_{ij} \log(\mub_{kj})+(1-\xx_{ij})\log(1-\mub_{kj})
+    \end{align*}
+And now we maximize by setting the partial with respect to $\mub$ to zero
+\begin{align*}
+    \frac{\partial\ell}{\partial \mub_{kj}} &= \sum_ir_{ik}\frac{\partial \sum_j \xx_{ij} \log(\mub_{kj})+(1-\xx_{ij})\log(1-\mub_{kj})}{\partial \mub_{jk}}\\
+    &= \sum_i r_{ik} \left[ \frac{\xx_{ij}}{\mub_{kj}}- \frac{1-\xx_ij}{1-\mub_{kj}}\right]\\
+    &= \sum_i r_{ik} \left[ \frac{x_{ij}-\mub_{kj}}{\mub_{kj}(1-\mub_{kj}}\right]
+\end{align*}
+We can pull out the $\mub_{jk}$ terms and solve for the optimal value; 
+\begin{align*}
+    0 &=\frac{1}{\mub_{kj}(1-\mub_{kj})} \sum_{i} r_{ik} (\xx_{ij} - \mu_{kj})
+\end{align*}
+So we can see that;
+\begin{align*}
+    \mu_{kj} = \frac{\sum_i r_{ik}x_{ij}}{\sum_i r_{ik}}
+\end{align*}
+As desired. 
+\item  We know that this will be equivalent to the  complete log likelihood plus the log of the prior. 
+\begin{align*}
+    \ell(\mub)&= \sum_i \sum_k r_{ik} \sum_j \xx_{ij} \log(\mub_{kj})+(1-\xx_{ij})\log(1-\mub_{kj})+ (a-1) \log(\mub_{jk})+ (b-1)\log(1-\mub_{kj})
+\end{align*}
+Again lets take the partial and set to zero. This one is much messier, I did the work on a whiteboard and have summarized here; 
+    \begin{align*}
+        \frac{\partial \ell}{\partial \mub_{kj}}&= \frac{1}{\mub_{kj}
+        (1-\mub_{kj})}\sum_i r_{ik}(\xx_{ij}-\mub_{jk})+a - 1 + \mub_{jk}
+        (2-b) = 0 \\
+        &= \sum_ir_{ik}\xx_ij+a-1-\sum_i \mub_{kj}(r_{ik}+a+b-2)
+    \end{align*}
+Again we can solve this for an optimal condition, which we see is in fact; 
+\begin{align*}
+    \mu_{kj} = \frac{\left(\sum_i r_{ik}x_{ij}\right) + a - 1}{\left(\sum_i r_{ik}\right) + a + b - 2}.
+\end{align*}
+\end{enumerate}
+
 \end{solution}
 \newpage
 
