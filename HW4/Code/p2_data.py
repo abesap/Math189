@@ -19,6 +19,7 @@ name_list = ['pix_{}'.format(i + 1) for i in range(784)]
 name_list = ['label'] + name_list
 
 # read the training data
+print('Loading training data')
 df_train = pd.read_csv('http://pjreddie.com/media/files/mnist_train.csv', \
 	sep=',', engine='python', names = name_list)
 

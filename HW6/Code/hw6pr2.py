@@ -28,7 +28,8 @@ import urllib
 
 if __name__ == '__main__':
 
-	# =============STEP 0: LOADING DATA=================
+	# =============STEP 0: LOADING DATA=================							ls
+	
 	# NOTE: Be sure to install Pillow with "pip3 install Pillow"
 	print('==> Loading image data...')
 	img = ndimage.imread(urllib.request.urlopen('http://i.imgur.com/X017qGH.jpg'), flatten=True)
