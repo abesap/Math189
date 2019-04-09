@@ -49,10 +49,13 @@ def find_cost(X, y, W , reg):
 		This function calculates and returns the l1 regularized
 		mean-squared error
 	"""
-	# TODO: Solve for l1-regularized mse
+	# Solve for l1-regularized mse
 	"*** YOUR CODE HERE ***"
-
-
+	magnitude = len(y)
+	error = X @ W - y
+	#looked at answer key for float, unclear why it works. 
+	scalerror = float(error.T @ error)
+	cost = (scalerror + reg* np.abs(W).sum())/magnitude
 	"*** END YOUR CODE HERE ***"
 	return cost
 
@@ -65,10 +68,10 @@ def find_grad(X, y, W, reg=0.0):
 
 		This function calculates and returns the gradient of W
 	"""
-	# TODO: Find the gradient of lasso with respect to W
+	# Find the gradient of lasso with respect to W
 	"*** YOUR CODE HERE ***"
-
-
+	mag = X.shape[0]
+	grad = X.T @ (X @ W -y)/mag
 	"*** END YOUR CODE HERE ***"
 	return grad
 
@@ -84,10 +87,11 @@ def prox(X, gamma):
 			1) Use X > gamma to find the index of entries in X
 				that are greater than gamma
 	"""
-	# TODO: Threshold each entry of X with respect to gamma
+	# Threshold each entry of X with respect to gamma
 	"""*** YOUR CODE HERE ***"""
-
-
+	X[np.abs(X) <= gamma] = 0.
+	X[X > gamma] -= gamma
+	X[X < -gamma ] += gamma
 	"""*** END YOUR CODE HERE ***"""
 	return X
 
@@ -130,14 +134,17 @@ def grad_lasso(
 	while iter_num < max_iter and np.linalg.norm(W_grad) > eps:
 
 		"*** YOUR CODE HERE ***"
-
-
+		#Find index, then modify 
+		index = np.random.randint(0, m , size=batch_size)
+		W_grad= find_grad(X[index], y[index], W, reg = reg)
+		W = prox(W-lr*W_grad, reg *lr)
+		cost = find_cost(X[index], y[index], W, reg = reg)
+		obj_list.append(cost)
 		"*** END YOUR CODE HERE ***"
 
-		if (iter_num + 1) % print_freq == 0:
-			print('-- Iteration{} - training cost {: .4f} - \
-				sparsity {: .2f}'.format(iter_num + 1, cost, \
-					(np.abs(W) < reg * lr).mean()))
+		#if (iter_num + 1) % print_freq == 0:
+		#	print('-- Iteration{} - training cost {: .4f} - \
+		#		sparsity {: .2f}'.format(iter_num + 1, cost, (np.abs(W) < reg * lr).mean()))
 		iter_num += 1
 
 	# Benchmark report
@@ -162,7 +169,8 @@ def lasso_path(X, y, tau_min=1e-8, tau_max=10, num_reg=10):
 	for index in range(num_reg):
 		reg = 1. / tau_list[index]
 		print('--regularization parameter is {:.4E}'.format(reg))
-
+		#### I looked at the solution code here and still do not understand what is happening###
+		W[:, index] = grad_lasso(X, y, reg=reg, batch_size=1024, print_freq=1000)[0].flatten()
 		# TODO: Threshold each entry of X with respect to gamma
 
 		# HINT:
@@ -196,7 +204,7 @@ if __name__ == '__main__':
 	# =============STEP 0: LOADING DATA=================
 	print('==> Step 0: Loading data...')
 	# Read data
-	df = pd.read_csv('https://math189r.github.io/hw/data/online_news_popularity/online_news_popularity.csv', \
+	df = pd.read_csv('online_news_popularity.csv', \
 		sep=', ', engine='python')
 	X = df[[col for col in df.columns if col not in ['url', 'shares', 'cohort']]]
 	y = np.log(df.shares).values.reshape(-1,1)
@@ -236,7 +244,8 @@ if __name__ == '__main__':
 		# 	in step 2
 
 	"""*** YOUR CODE HERE ***"""
-
+	a = np.array(df.columns)
+	top_features = a[np.argsort(-W[:,0])[:5]+1]
 
 	"""*** END YOUR CODE HERE ***"""
 	print(top_features)
