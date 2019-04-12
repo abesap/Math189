@@ -1,7 +1,9 @@
 import quandl
 import json
 import numpy as np
+from dateutil.parser import parse
 import datetime as dt
+import pandas as pd
 import pandas_datareader as web
 import sklearn
 import sklearn.preprocessing
@@ -47,7 +49,6 @@ def normalize (query):
         templist = []
         count = 0
         for x in dictionary[ticker].axes[0]:
-            "Grab the thing and add it to the temporary list"
             count +=1
             if (count%28==1):
                 val = dictionary[ticker].at[x, 'open' ]
@@ -58,27 +59,46 @@ def normalize (query):
                 count+=1
             if (count%28 == 0):
                 toreturn.append(np.array(templist))
-                templist = []
     prenorm = np.array(toreturn)
     #sklearn.preprocessing.normalize(prenorm,copy = False)
     return [x.tolist() for x in prenorm]
+def search_for_quarters(query)
+    tuple_quarters= [('03','31'),
+        ('06','30'),('09','30'),('12','30')]
+    toreturn = []
+    count = 0 
+    for x in vals[list(query.keys())[4]].axes[0]:  
+        year,month,day = (x.strip('-').split('-'))
+        if (month,day) in tuple_quarters:
+            toreturn.append(x)
+    return toreturn
+def quarter_trunate(que):
+    vals = que
+    toreturn = search_for_quarters(query)
+    stock_list = []
+    for ticker in list(vals.keys()):
+        if ticker in vals:
+            temp = vals[ticker]
+            vals = temp.iloc[:,3:5]
+            for y in range(len(toreturn)-1):
+                normalized = vals.loc[toreturn[y]:toreturn[y+1]]
+                a = normalized.apply(lambda x: x/x.iloc[0], axis = 0)
+                stock_list.append(a)
+        else:
+            pass
+    return stock_list
+daterange = ((2014,12,1),(2018,2,1))
+def local_quarter(query):
+    """Inputs a query object and returns a np array of arrays representing 
+        the close price and volume, relative to the initial value, for 10
+        days around the quarterly times """
+    contquart = search_for_quarters(query)
+    change = dt.timedelta(days = 5)
+    for x in contquart:
+        year,month,day = (x.strip('-').split('-'))
         
-            
-            
-
-    ''' 
-       query is the output from the previous function
-    '''
-
-def dfgen  (tickers, dates, database, division):
-    ''' 
-        tickers is the set of stock tickers that we
-            are interested in
-        dates is a year range; eg (2009, 2010), simply 
-            a start and a stop
-        database is a the number 
-    ''' 
-
+    
+    return 
 ### Run K means on this array ###
 def kMeans(prenorm, clusters = 8):
     prenorm = [x for x in prenorm if len(x) != 28]
@@ -294,38 +314,6 @@ def plotsignif(gmm,labels):
     plt.ylabel("Value(normalized)")
     plt.savefig("sigfig.png")
     plt.show()
-"""
-    plt.hist(noise,bins= 256, density=True)
-    mu, std = norm.fit(noise)
-    a = np.std(noise)
-    print(a)
-    plt.xlabel("Error")
-    plt.ylabel("Density")
-    plt.title("Distribution of Error")
-    xmin, xmax = plt.xlim()
-    x = np.linspace(xmin, xmax, 100)
-    p = norm.pdf(x, mu, std)
-    plt.plot(x, p, 'k', linewidth=2)
-    plt.savefig("hist2.png", dpi = 300)
-    plt.show()
-    errbound = 1.96*a
-    count = 0
-    sig = []
-    for x in gmm.means_:
-        if abs(x[0]-x[-1])>errbound:
-            sig.append(count)
-            plt.plot(x,'r', linewidth = 2)
-        else:
-            plt.plot(x, 'black', linewidth = 2)
-        count +=1 
-    print (sig)
-    val = len(list(filter(lambda x: x in sig, labels)))
-    count = val/len(labels)
-    plt.title("Significant Clusters")
-    plt.savefig("SigClus.png", dpi = 300)
-    plt.show()
-    return noise,a,count
-"""
 def accuracy(kmean, difnorm):
     labels = kmean.predict(difnorm)
     tovalidate = []
