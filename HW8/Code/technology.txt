@@ -1,0 +1,10 @@
+MSFT	
+AAPL	
+V	
+INTC	
+CSCO	
+MA	
+ORCL	
+ADBE	
+IBM	
+PYPL	

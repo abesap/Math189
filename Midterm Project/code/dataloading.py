@@ -35,6 +35,8 @@ def query(DateRange,ticker= tickere, database=database):
     '''
     start= dt.datetime(DateRange[0][0],DateRange[0][1],DateRange[0][2])
     end = dt.datetime(DateRange[1][0], DateRange[1][1], DateRange[1][2])
+    if type(ticker) == str: 
+        ticker = [ticker]
     to_return = {}
     for x in tqdm(ticker):
         to_return[x] = web.DataReader(x,database, start, end)
@@ -62,19 +64,18 @@ def normalize (query):
     prenorm = np.array(toreturn)
     #sklearn.preprocessing.normalize(prenorm,copy = False)
     return [x.tolist() for x in prenorm]
-def search_for_quarters(query)
+def search_for_quarters(que):
     tuple_quarters= [('03','31'),
         ('06','30'),('09','30'),('12','30')]
     toreturn = []
-    count = 0 
-    for x in vals[list(query.keys())[4]].axes[0]:  
+    for x in que[list(que.keys())[0]].axes[0]: 
         year,month,day = (x.strip('-').split('-'))
         if (month,day) in tuple_quarters:
             toreturn.append(x)
     return toreturn
 def quarter_trunate(que):
     vals = que
-    toreturn = search_for_quarters(query)
+    toreturn = search_for_quarters(vals)
     stock_list = []
     for ticker in list(vals.keys()):
         if ticker in vals:
@@ -94,9 +95,33 @@ def local_quarter(query):
         days around the quarterly times """
     contquart = search_for_quarters(query)
     change = dt.timedelta(days = 5)
+    toreturn = []
     for x in contquart:
         year,month,day = (x.strip('-').split('-'))
-        
+        quarter=dt.date(int(year),int(month),int(day))
+        advance = quarter+change
+        before = quarter-change
+        ayear = advance.year
+        amonth = advance.month
+        aday = advance.day
+        byear = before.year
+        bmonth = before.month
+        bday = before.day
+        before= str(byear)+'-'+"{:02d}".format(bmonth)+'-'+"{:02d}".format(bday)
+        after= str(ayear)+'-'+"{:02d}".format(amonth)+'-'+"{:02d}".format(aday)
+        toreturn.append((before,after))
+    stock_list = []
+    for ticker in list(query.keys()):
+        if ticker in query:
+            temp = query[ticker]
+            query = temp.iloc[:,3:5]
+            for y in range(len(toreturn)):
+                normalized = query.loc[toreturn[y][0]:toreturn[y][1]]
+                a = normalized.apply(lambda x: x/x.iloc[0], axis = 0)
+                stock_list.append(a)
+        else:
+            pass
+    return stock_list
     
     return 
 ### Run K means on this array ###
@@ -154,6 +179,15 @@ def load(filename):
             x =x[:-1]
             tickers.append(x)
     return tickers  
+def industries(filename, outfilename):
+    """ Inputs a filename and returns a list of their symbols"""
+    tickers ={}
+    with open(filename)as f:
+        for x in f:
+            x = x.split(",")
+            tickers[x[0]]= x[1][:-1]
+    with open(outfilename+".json", 'w') as outfile:
+        json.dump(tickers, outfile)
 def truncate(prenorm, length=5):
     toreturn = [x[:length]for x in tqdm(prenorm)]
     return toreturn
